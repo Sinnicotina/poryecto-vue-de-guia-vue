@@ -1,19 +1,32 @@
-
-
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Comunas from '../views/Comunas.vue';
 
-const routes: Array<RouteRecordRaw> = [
+import EditarComuna from '../components/Comuna/EditarComuna.vue';
+import NewComuna from '../components/Comuna/NewComuna.vue';
+import Comunas from '../views/Comunas.vue';
+import HomeView from '../views/HomeView.vue';
+
+
+
+const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: HomeView
   },
   {
     path: '/comunas',
     name: 'Comunas',
     component: Comunas
+  },
+  {
+    path: '/editar-comuna/:id',
+    name: 'EditarComuna',
+    component: EditarComuna
+  },
+  {
+    path: '/add-comuna/:id',
+    name: 'NewComuna',
+    component: NewComuna
   },
   {
     path: '/about',

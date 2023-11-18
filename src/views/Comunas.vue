@@ -1,6 +1,10 @@
 <template>
     <div class="container">
-        <h1>listado comunas</h1>
+        <h1 class="text-start">listado comunas |
+            <button @click="newComuna()" class="btn btn-success mx-2">
+                <font-awesome-icon icon="plus" />
+            </button>
+        </h1>
         <table class="table">
             <thead>
                 <tr>
@@ -8,16 +12,25 @@
                     <th scope="col">Code</th>
                     <th scope="col">Name</th>
                     <th scope="col">Municipality</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(comuna, index) in comunas" :key="index">
 
-                    <td scope="row">{{ index + 1 }}</td>
+                    <th scope="row">{{ index + 1 }}</th>
                     <td>{{ comuna.comu_codi }}</td>
                     <td>{{ comuna.comu_nomb }}</td>
                     <td>{{ comuna.muni_nomb }}</td>
-                </tr>               
+                    <td>
+                        <button @click="deleteComuna(comuna.comu_codi)" class="btn btn-danger mx-2">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                        <button @click="editComuna(comuna.comu_codi)" class="btn btn-warning mx-2">
+                            <font-awesome-icon icon="pencil" />
+                        </button>
+                    </td>
+                </tr>
             </tbody>
 
         </table>
@@ -27,17 +40,49 @@
 </template>
 <script>
 import axios from 'axios'
+import Swal from 'sweetalert2'
 export default {
+
     name: 'Comuna',
-    data(){
-        return{
-        comunas: []
-    }
-},
-mounted(){
+    data() {
+        return {
+            comunas: []
+        }
+    },
+    methods: {
+        deleteComuna(codigo) {
+            Swal.fire({
+                title: `Do you want to delete the comuna with id ${codigo}?`,
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+            }).then((result)=> {
+                /*read more isConfirmed, isDenied below*/
+                if (result.isConfirmed) {
+                    //Swal.fire('Saved!', '', 'success')
+                    axios.delete(`http://127.0.0.1:8000/api/comunas/${codigo}`)
+                        .then(response => {
+                            if (response.data.success) {
+                                Swal.fire('Deleted.data.success')
+                                    Swal.fire('Delete!! ', '', 'success')
+                                    this.comunas = response.data.comunas
+                                }
+                        })
+                }
+            })
+        },
+        editComuna(id){
+            this.$router.push({name: 'EditarComuna', params: {id: `${id}`}})
+        },
+        newComuna(){
+            this.$router.push({name: 'NewComuna'});
+        }
+
+    },
+
+mounted() {
     axios
-    .get('http://127.0.0.1:8000/api/comunas')
-    .then(response=>(this.comunas=response.data.comunas))
+        .get('http://127.0.0.1:8000/api/comunas')
+        .then(response => (this.comunas = response.data.comunas))
     console.log(this.comunas)
 },
 }
